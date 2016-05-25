@@ -1,0 +1,1 @@
+<p>Error: {$error}</p>
