@@ -1,7 +1,6 @@
 <?php
 
 require_once 'exceptions.php';
-require_once 'utils.php';
 
 const PROVIDER_ITSYOU_ONLINE = 'It\'s You Online';
 
@@ -38,18 +37,6 @@ abstract class OAuthProvider {
 		$this->identity = $identity;
 	}
 
-	protected function getFirstSetting($property) {
-		return get_first_value_from_array($this->identity, $property);
-	}
-
-	protected function getNestedSetting($property, $sub_property) {
-		$address_info = $this->getFirstSetting($property);
-		if ($address_info && isset($address_info[$sub_property])) {
-			return $address_info[$sub_property];
-		}
-		return null;
-	}
-
 	abstract public function getEmail();
 
 	abstract public function getPhone();
@@ -72,6 +59,17 @@ abstract class OAuthProvider {
 
 
 class ItsYouOnlineProvider extends OAuthProvider {
+	protected function getMainSetting($property) {
+		return $this->identity[$property]['main'];
+	}
+
+	protected function getNestedSetting($property, $sub_property) {
+		$address_info = $this->getMainSetting($property);
+		if ($address_info && isset($address_info[$sub_property])) {
+			return $address_info[$sub_property];
+		}
+		return null;
+	}
 
 	function __construct($identity) {
 		parent::__construct($identity);
@@ -79,7 +77,7 @@ class ItsYouOnlineProvider extends OAuthProvider {
 
 
 	function getEmail() {
-		$email = $this->getFirstSetting('email');
+		$email = $this->getMainSetting('email');
 		if (!$email) {
 			$email = isset($this->identity['username']) ? sprintf('%s@itsyou.online', $this->identity['username']) : null;
 		}
@@ -87,7 +85,7 @@ class ItsYouOnlineProvider extends OAuthProvider {
 	}
 
 	function getPhone() {
-		return $this->getFirstSetting('phone');
+		return $this->getMainSetting('phone');
 	}
 
 	public function getAddress() {

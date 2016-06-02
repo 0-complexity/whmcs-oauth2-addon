@@ -90,12 +90,6 @@ function validate_login($client_id, $password, $expires_in, $admin_user) {
 
 
 function get_identity($username, $access_token, $url, $identity_path) {
-	// todo: remove when this call is implemented on itsyou.online
-	return array(
-		'username' => $username,
-		'email'    => array(sprintf('%s@itsyou.online', $username)),
-	);
-	// end todo
 	$identity_url = $url . sprintf($identity_path, $username);
 	$ch = curl_init();
 	$headers = array(
@@ -109,6 +103,7 @@ function get_identity($username, $access_token, $url, $identity_path) {
 		CURLOPT_SSL_VERIFYPEER => true,
 		CURLOPT_VERBOSE        => false,
 		CURLOPT_HTTPHEADER     => $headers,
+		CURLOPT_CUSTOMREQUEST  => 'GET',
 	);
 
 	curl_setopt_array($ch, $curl_opts);
@@ -117,8 +112,7 @@ function get_identity($username, $access_token, $url, $identity_path) {
 	curl_close($ch);
 	if ($http_code !== 200) {
 		logModuleCall('custom_oauth2', __FUNCTION__, $identity_url,
-			sprintf('%d Unable to get user info from %s.', $http_code, $url), $result
-		);
+			sprintf('%d Unable to get user info from %s - %s', $http_code, $url, $result));
 		return false;
 	}
 	else {
