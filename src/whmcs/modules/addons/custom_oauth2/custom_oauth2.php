@@ -172,7 +172,7 @@ function custom_oauth2_clientarea($vars) {
 		if ($vars['jwt_path']) {
 			try {
 				$_SESSION['jwt'] = get_client_jwt_token($vars['url'] . $vars['jwt_path'],
-					$_SESSION['oauth2_access_token'], 'read');
+					$_SESSION['oauth2_access_token'], '');
 				logModuleCall('custom_oauth2', __FUNCTION__, 'jwt token:' . $_SESSION['jwt']);
 			} catch (BusinessException $e) {
 				logModuleCall('custom_oauth2', __FUNCTION__, 'failed to get JWT token: ' . $e->getMessage());
