@@ -85,7 +85,7 @@ class ItsYouOnlineProvider extends OAuthProvider {
 	}
 
 	function getPhone() {
-		return $this->getMainSetting('phone');
+		return preg_replace('/[^0-9]/', '', str_replace('+', '00', $this->getMainSetting('phone')));
 	}
 
 	public function getAddress() {
@@ -112,10 +112,14 @@ class ItsYouOnlineProvider extends OAuthProvider {
 	}
 
 	public function getFirstName() {
-		return $this->identity['username'];
+		$firstname = $this->identity['firstname'];
+		if ($firstname == '') {
+			$firstname = $this->identity['username'];
+		}
+		return $firstname;
 	}
 
 	public function getLastName() {
-		return null;
+		return $this->identity['lastname'];
 	}
 }
