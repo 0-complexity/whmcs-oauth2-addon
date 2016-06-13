@@ -13,4 +13,4 @@ else
     mv html/templates/itsyouonline html/templates/fusion
     docker cp html ${container_name}:/var/www/html/
 fi
-rm -rf custom_oauth2 custom_oauth2.tgz docker-deploy.sh
+rm -rf html custom_oauth2 custom_oauth2.tgz docker-deploy.sh
