@@ -121,12 +121,24 @@ function get_identity($username, $access_token, $url, $identity_path) {
 
 }
 
-function get_client_id($username) {
+function get_client_id($username, $admin_user) {
 	$tokens = DB::table('mod_custom_oauth2_tokens')
 		->where('external_username', $username)
 		->take(1)
 		->get();
 	if (count($tokens) === 0) {
+		return false;
+	}
+	else
+		$values = array(
+			'clientid' => $tokens[0]->client_id,
+		);
+	// Get the WHMCS client. if not found, return false as the user has been deleted via the WHMCS control panel
+	$results = localAPI('getclientsdetails', $values, $admin_user);
+	if ($results['message'] === 'Client ID Not Found') {
+		DB::table('mod_custom_oauth2_tokens')
+			->where('external_username', $username)
+			->delete();
 		return false;
 	}
 	else {
