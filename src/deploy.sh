@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-# First argument of this script should be the root password for this machine
-# Second argument the remote host, e.g. root@123.213.132.158
-# Third argument is the ssh port of the remote host
-# Fourth argument is the name of the container whmcs is running in, e.g. whcms
+# First argument of this script should be the user password of the user with which you login on your Docker machine, hosting the Docker container
+# Second argument is of format username@docker_machine, e.g. cloudscalers@123.213.132.158
+# Third argument is the SSH port of the Docker machine
+# Fourth argument is the name of the Docker container WHMCS is running in, e.g. whcms
 # Fifth argument should be 'debug' if you want to upload to the dev server
 set -euf
 rootpassword=$1
