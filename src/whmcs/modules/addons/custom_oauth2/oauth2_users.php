@@ -135,7 +135,8 @@ function get_client_id($username, $admin_user) {
 		);
 	// Get the WHMCS client. if not found, return false as the user has been deleted via the WHMCS control panel
 	$results = localAPI('getclientsdetails', $values, $admin_user);
-	if ($results['message'] === 'Client ID Not Found') {
+	if ($results['result'] === 'error') {
+		logModuleCall('custom_oauth2', __FUNCTION__, 'Deleting oauth2 tokens for user ' . $username . ' because the client was not found');
 		DB::table('mod_custom_oauth2_tokens')
 			->where('external_username', $username)
 			->delete();
