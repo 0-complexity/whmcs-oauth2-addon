@@ -11,6 +11,6 @@ if [ ${debug} = 'debug' ]; then
 else
     mv whmcs html
     mv html/templates/itsyouonline html/templates/fusion
-    docker cp html ${container_name}:/var/www/html/
+    docker cp html ${container_name}:/var/www/
 fi
 rm -rf html custom_oauth2 custom_oauth2.tgz docker-deploy.sh
