@@ -3,7 +3,7 @@
 # Summary
 |Milestone|ETA|
 |---------|---|
-|[No milestone](#no-milestone)|0 seconds|
+|[No milestone](#no-milestone)|N/A|
 
 
 
