@@ -156,7 +156,6 @@ function custom_oauth2_clientarea($vars) {
 			$new_user = true;
 			if ($identity === null) {
 				$identity = get_identity($username, $token['access_token'], $vars['url'], $vars['identity_path']);
-				logModuleCall('custom_oauth2', 'identity', $identity);
 			}
 			if ($identity === false) {
 				header("Location: index.php");
@@ -178,7 +177,6 @@ function custom_oauth2_clientarea($vars) {
 			try {
 				$_SESSION['jwt'] = get_client_jwt_token($vars['url'] . $vars['jwt_path'],
 					$_SESSION['oauth2_access_token'], '');
-				logModuleCall('custom_oauth2', __FUNCTION__, 'jwt token:' . $_SESSION['jwt']);
 			} catch (BusinessException $e) {
 				logModuleCall('custom_oauth2', __FUNCTION__, 'failed to get JWT token: ' . $e->getMessage());
 			}
