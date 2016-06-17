@@ -3,12 +3,13 @@ set -euf
 container_name=$1
 debug=$2
 cd /tmp
-rm -rf /tmp/whmcs
+rm -rf /tmp/whmcs /tmp/html
 tar -xvf custom_oauth2.tgz
 if [ ${debug} = 'debug' ]; then
     echo "Deploying to dev server"
     docker cp whmcs ${container_name}:/var/www/html/
 else
+    echo "Deploying to production"
     mv whmcs html
     mv html/templates/itsyouonline html/templates/fusion
     docker cp html ${container_name}:/var/www/

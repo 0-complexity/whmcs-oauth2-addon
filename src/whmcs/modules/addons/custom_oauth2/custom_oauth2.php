@@ -140,24 +140,29 @@ function custom_oauth2_clientarea($vars) {
 			$vars['redirect_uri'], $state);
 
 		// Request user information - This only works with itsyou.online and saves us a request when the user isn't new.
-		// todo: make generic
 		$identity = null;
 		$username = isset($token['info']) && isset($token['info']['username']) ? $token['info']['username'] : null;
 		if (!$username) {
 			$identity = get_identity($username, $token['access_token'], $vars['url'], $vars['identity_path']);
 		}
-		$client_id = get_client_id($username);
+		$oauth_provider = get_oauth_provider($vars['provider']);
+		$authorized = $oauth_provider->isAuthorized($vars['scope'], $token);
+		if (!$authorized) {
+			throw new BusinessException('You do not have permission to login.');
+		}
+		$client_id = get_client_id($username, $vars['admin_user']);
 		$new_user = false;
 		if ($client_id === false) {
 			$new_user = true;
 			if ($identity === null) {
 				$identity = get_identity($username, $token['access_token'], $vars['url'], $vars['identity_path']);
+				logModuleCall('custom_oauth2', 'identity', $identity);
 			}
 			if ($identity === false) {
 				header("Location: index.php");
 				exit();
 			}
-			$oauth_provider = get_oauth_provider($vars['provider'], $identity);
+			$oauth_provider->setIdentity($identity);
 			$client_id = create_user($token['access_token'], $vars, $oauth_provider);
 		}
 		else {
