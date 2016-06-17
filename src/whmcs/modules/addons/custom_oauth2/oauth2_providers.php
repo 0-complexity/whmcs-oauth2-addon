@@ -96,7 +96,6 @@ class ItsYouOnlineProvider extends OAuthProvider {
 		}
 		$scopes = explode(",", $token_scope);
 		foreach ($scopes as $scope) {
-			logModuleCall('custom_oauth2', $scope, $requested_scope);
 			if (strpos($scope, 'user:memberof:') !== false && strpos($requested_scope, $scope) !== false) {
 				return true;
 			}
