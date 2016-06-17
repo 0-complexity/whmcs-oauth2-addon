@@ -105,7 +105,7 @@ class ItsYouOnlineProvider extends OAuthProvider {
 	}
 
 	function getEmail() {
-		$email = $this->getFirstSetting('emailaddresses');
+		$email = $this->getNestedSetting('emailaddresses', 'emailaddress');
 		if (!$email || $email == '' || $email == null) {
 			$email = sprintf('%s@itsyou.online', $this->identity['username']);
 		}
