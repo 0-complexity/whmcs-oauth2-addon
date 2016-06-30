@@ -16,8 +16,15 @@ function hook_template_variables_custom_oauth2($vars) {
 	$clientsData = isset($vars['clientsdetails']) ? $vars['clientsdetails'] : null;
 	$url = $authorize_path = $client_id = $redirect_uri = $scope = $provider = null;
 
-	// show login url if client is not logged in
-	if (!(is_array($clientsData) && isset($clientsData['id']))) {
+	// Generate login url if client is not logged in or token has expired
+	if (!(is_array($clientsData) && isset($clientsData['id'])) || isset($_SESSION['token_expires_on']) && $_SESSION['token_expires_on'] < time()) {
+		// Token no longer valid / user not logged in. Clear session variables.
+		// todo: when refresh tokens are supported, use those instead to fetch a new access token.
+		unset($_SESSION['uid']);
+		unset($_SESSION['upw']);
+		unset($_SESSION['token_expires_on']);
+		unset($_SESSION['oauth2_access_token']);
+		unset($_SESSION['external_username']);
 		// Generate a login URL
 		if (!isset($_SESSION['state'])) {
 			$state = hash('sha256', microtime(TRUE) . rand() . $_SERVER['REMOTE_ADDR']);
@@ -62,18 +69,6 @@ function hook_template_variables_custom_oauth2($vars) {
 		);
 		$extraTemplateVariables['custom_oauth2_login_url'] = $url . $authorize_path . '?' . http_build_query($params);
 
-	}
-	else {
-		// Check if OAuth token is still valid
-		if ($_SESSION['token_expires_on'] < time()) {
-			// Token no longer valid. Log the user out.
-			// todo: when refresh tokens are supported, use those instead to fetch a new access token.
-			unset($_SESSION['uid']);
-			unset($_SESSION['upw']);
-			unset($_SESSION['token_expires_on']);
-			unset($_SESSION['oauth2_access_token']);
-			unset($_SESSION['external_username']);
-		}
 	}
 
 	// return array of template variables to define

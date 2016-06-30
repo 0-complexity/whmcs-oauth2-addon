@@ -132,6 +132,7 @@ function custom_oauth2_clientarea($vars) {
 		}
 		$state = $_GET['state'];
 		if ($state !== $_SESSION['state']) {
+			logModuleCall('custom_oauth2', __FUNCTION__, 'state does not match: ' . $state . ' != ' . $_SESSION['state']);
 			throw new BusinessException('Bad request');
 		}
 		$access_token_url = $vars['url'] . $vars['token_path'];
@@ -181,6 +182,9 @@ function custom_oauth2_clientarea($vars) {
 				logModuleCall('custom_oauth2', __FUNCTION__, 'failed to get JWT token: ' . $e->getMessage());
 			}
 		}
+		// Successfully logged in, remove temporary state from session.
+		unset($_SESSION['state']);
+
 		// Redirect existing users to homepage, redirect new users to their profile page so they can fill in missing info.
 		if ($new_user) {
 			header("Location: clientarea.php?action=details");
